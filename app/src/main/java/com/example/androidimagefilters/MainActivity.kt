@@ -3,15 +3,27 @@ package com.example.androidimagefilters
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
+import coil.transform.RoundedCornersTransformation
 import com.example.androidimagefilters.ui.theme.AndroidImageFiltersTheme
 
 
@@ -20,7 +32,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AndroidImageFiltersTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -35,18 +46,83 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppScreen(modifier: Modifier = Modifier) {
 
-   FilteredImage()
-}
+    val context = LocalContext.current
+    val imageURL = "https://picsum.photos/id/11/200/300"
+    val imageSize = 500.dp
 
-@Composable
-fun FilteredImage() {
+    val imageRequest = ImageRequest.Builder(context)
+        .data(imageURL)
+        .build()
 
-    AsyncImage(
-        model = "https://picsum.photos/id/11/200/300",
-        contentDescription = null,
-        modifier = Modifier.size(100.dp)
-    )
+    val imageCircleCropRequest = ImageRequest.Builder(context)
+        .data(imageURL)
+        .transformations(CircleCropTransformation())
+        .build()
 
+    val imageRoundedCornersRequest = ImageRequest.Builder(context)
+        .data(imageURL)
+        .transformations(RoundedCornersTransformation(radius = 10f))
+        .build()
+
+
+    val scrollState = rememberScrollState()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .padding(12.dp)
+            .verticalScroll(scrollState)
+    ) {
+        Text(
+            modifier = modifier.padding(12.dp),
+            text = "Image loaded from the internet using coil API"
+        )
+        AsyncImage(
+            model = imageRequest,
+            contentDescription = null,
+            modifier = Modifier.size(size = imageSize)
+        )
+
+        Text(
+            modifier = modifier.padding(12.dp),
+            text = "Image with blur effect"
+        )
+
+        AsyncImage(
+            model = imageRequest,
+            contentDescription = null,
+            modifier = Modifier
+                .size(size = imageSize)
+                .blur(radius = 10.dp, BlurredEdgeTreatment.Rectangle)
+        )
+
+        Text(
+            modifier = modifier.padding(12.dp),
+            text = "Image cropped to a circle"
+        )
+
+        AsyncImage(
+            model = imageCircleCropRequest,
+            contentDescription = null,
+            modifier = Modifier
+                .size(size = imageSize)
+
+        )
+
+        Text(
+            modifier = modifier.padding(12.dp),
+            text = "Image with rounded corners"
+        )
+
+        AsyncImage(
+            model = imageRoundedCornersRequest,
+            contentDescription = null,
+            modifier = Modifier
+                .size(size = imageSize)
+
+        )
+
+
+    }
 }
 
 @Preview(showBackground = true)
