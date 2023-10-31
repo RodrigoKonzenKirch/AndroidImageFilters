@@ -23,6 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -89,7 +92,7 @@ fun AppScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.size(size = imageSize)
         )
 
-        Divider(Modifier.padding(vertical = 30.dp))
+        SimpleDivider()
 
         Text(
             modifier = modifier.padding(12.dp),
@@ -98,7 +101,7 @@ fun AppScreen(modifier: Modifier = Modifier) {
 
         BlurredImage(imageRequest = imageRequest, imageSize = imageSize)
 
-        Divider(Modifier.padding(vertical = 30.dp))
+        SimpleDivider()
 
         Text(
             modifier = modifier.padding(12.dp),
@@ -113,7 +116,7 @@ fun AppScreen(modifier: Modifier = Modifier) {
 
         )
 
-        Divider(Modifier.padding(vertical = 30.dp))
+        SimpleDivider()
 
         Text(
             modifier = modifier.padding(12.dp),
@@ -128,7 +131,37 @@ fun AppScreen(modifier: Modifier = Modifier) {
 
         )
 
+        SimpleDivider()
+
+        Text(
+            modifier = modifier.padding(12.dp),
+            text = "Image with no saturation(black and white)"
+        )
+
+        val colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0F) })
+        AsyncImage(
+            model = imageRequest,
+            contentDescription = null,
+            modifier = Modifier
+                .size(size = imageSize),
+            colorFilter = colorFilter
+
+        )
+
+        AsyncImage(
+            model = imageRoundedCornersRequest,
+            contentDescription = null,
+            modifier = Modifier
+                .size(size = imageSize),
+            colorFilter = ColorFilter.tint(Color.Blue)
+
+        )
     }
+}
+
+@Composable
+fun SimpleDivider() {
+    Divider(Modifier.padding(vertical = 30.dp))
 }
 
 @Composable
